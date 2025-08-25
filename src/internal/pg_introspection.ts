@@ -646,8 +646,14 @@ export const schemaToTypeScript = (
 				schema.internal,
 			);
 
-			if (columns.includes("tsvector")) {
-				containsTSVector = true;
+			if (!containsTSVector) {
+				const tsvectorColFound = Object.values(it.columns).find((col) => {
+					return col.type.toLowerCase() === "tsvector";
+				});
+
+				if (tsvectorColFound) {
+					containsTSVector = true;
+				}
 			}
 
 			let statement = `export const ${withCasing(paramName, casing)} = ${func}("${it.name}", {${columns}})`;
