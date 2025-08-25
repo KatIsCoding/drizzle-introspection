@@ -11,6 +11,11 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "drizzle-orm": "^0.44.4"
+    "chalk": "^5.6.0",
+    "drizzle-orm": "^0.44.4",
+    "hanji": "^0.0.5",
+    "minimatch": "^10.0.3",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7"
   }
 }
