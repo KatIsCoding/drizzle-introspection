@@ -666,6 +666,7 @@ export const schemaToTypeScript = (
 		.join("\n\n");
 
 	const uniquePgImports = ["pgTable", ...new Set(imports.pg)];
+	console.log("TSVector found", containsTSVector);
 
 	// In case the statement include tsvector, then add the custom type.
 	if (containsTSVector) {
