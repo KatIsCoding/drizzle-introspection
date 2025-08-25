@@ -1,9 +1,13 @@
 {
-  "name": "drizzle-introspection",
+  "name": "pg-introspect",
   "module": "index.ts",
   "type": "module",
+  "bin": {
+    "pg-introspect": "./src/cli/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/pluralize": "^0.0.33",
     "@typescript/native-preview": "^7.0.0-dev.20250823.8",
     "hono": "^4.9.4"
   },
@@ -13,9 +17,11 @@
   "dependencies": {
     "chalk": "^5.6.0",
     "drizzle-orm": "^0.44.4",
+    "esbuild-register": "^3.6.0",
     "hanji": "^0.0.5",
     "minimatch": "^10.0.3",
     "pg": "^8.16.3",
+    "pluralize": "^8.0.0",
     "postgres": "^3.4.7"
   }
 }

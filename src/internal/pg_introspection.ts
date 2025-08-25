@@ -1048,14 +1048,11 @@ const column = (
 		let precision = null;
 
 		if (lowered.startsWith("time(")) {
-			Number(
-				lowered
-					.split(" ")[0]
-					.substring("time(".length, lowered.split(" ")[0].length - 1),
+			const splitted = lowered.split(" ");
+			precision = Number(
+				splitted[0]?.substring("time(".length, splitted[0].length - 1),
 			);
 		}
-
-		precision = precision ? precision : null;
 
 		const params = timeConfig({ precision, withTimezone });
 
@@ -1238,9 +1235,15 @@ const createTableColumns = (
 
 	const fkByColumnName = oneColumnsFKs.reduce(
 		(res, it) => {
-			const arr = res[it.columnsFrom[0]] || [];
+			const firstColFrom = it.columnsFrom[0];
+			if (!firstColFrom) {
+				return res;
+			}
+			const arr = res[firstColFrom] || [];
 			arr.push(it);
-			res[it.columnsFrom[0]] = arr;
+			if (it.columnsFrom[0]) {
+				res[it.columnsFrom[0]] = arr;
+			}
 			return res;
 		},
 		{} as Record<string, ForeignKey[]>,
