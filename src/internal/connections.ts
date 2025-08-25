@@ -21,6 +21,9 @@ export const preparePostgresDB = async (
 
 		const { drizzle } = await import("drizzle-orm/postgres-js");
 		const { migrate } = await import("drizzle-orm/postgres-js/migrator");
+		if ("url" in credentials) {
+			console.log("Using url", credentials.url);
+		}
 
 		const client =
 			"url" in credentials
