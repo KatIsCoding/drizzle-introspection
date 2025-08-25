@@ -13,9 +13,7 @@ export const preparePostgresDB = async (
 		migrate: (config: MigrationConfig) => Promise<void>;
 	}
 > => {
-	if ("driver" in credentials) {
-		const { driver } = credentials;
-
+	try {
 		console.log(
 			withStyle.info(`Using 'postgres' driver for database querying`),
 		);
@@ -78,10 +76,8 @@ export const preparePostgresDB = async (
 			transactionProxy,
 			migrate: migrateFn,
 		};
+	} catch (e) {
+		console.error(e);
+		process.exit(1);
 	}
-
-	console.error(
-		"To connect to Postgres database - please install 'postgres-js'.",
-	);
-	process.exit(1);
 };
