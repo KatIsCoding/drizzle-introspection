@@ -250,5 +250,5 @@ export async function introspectPostgres(
 	await Bun.write(relationsFile, relationsTs.file, {
 		createPath: true,
 	});
-	console.log();
+	// console.log();
 }

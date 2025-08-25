@@ -24,3 +24,4 @@ await introspectPostgres(
 	"none",
 	undefined,
 );
+process.exit(0);
