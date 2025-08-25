@@ -11,7 +11,7 @@ import { assertUnreachable, originUUID } from "./internal/global";
 import { paramNameFor, schemaToTypeScript } from "./internal/pg_introspection";
 import { plural, singular } from "pluralize";
 import { join } from "path";
-import { writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
 import "./@types/utils";
 
 const withCasing = (value: string, casing: Casing) => {
@@ -236,6 +236,11 @@ export async function introspectPostgres(
 	const ts = schemaToTypeScript(schema, casing);
 	const relationsTs = relationsToTypeScript(schema, casing);
 	const { internal, ...schemaWithoutInternals } = schema;
+	try {
+		mkdirSync(out, {
+			recursive: true,
+		});
+	} catch {}
 
 	const schemaFile = join(out, "schema.ts");
 	writeFileSync(schemaFile, ts.file);
