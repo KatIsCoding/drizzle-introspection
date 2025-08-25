@@ -646,16 +646,6 @@ export const schemaToTypeScript = (
 				schema.internal,
 			);
 
-			if (!containsTSVector) {
-				const tsvectorColFound = Object.values(it.columns).find((col) => {
-					return col.type.toLowerCase() === "tsvector";
-				});
-
-				if (tsvectorColFound) {
-					containsTSVector = true;
-				}
-			}
-
 			let statement = `export const ${withCasing(paramName, casing)} = ${func}("${it.name}", {${columns}})`;
 			statement += tablespace ? `.tablespace("${tablespace}")` : "";
 			statement += withOption ? `.with(${JSON.stringify(withOption)})` : "";
@@ -666,12 +656,10 @@ export const schemaToTypeScript = (
 		.join("\n\n");
 
 	const uniquePgImports = ["pgTable", ...new Set(imports.pg)];
-	console.log("TSVector found", containsTSVector);
 
 	// In case the statement include tsvector, then add the custom type.
-	if (containsTSVector) {
-		uniquePgImports.push("customType");
-	}
+
+	uniquePgImports.push("customType");
 
 	const importsTs = `import { ${uniquePgImports.join(
 		", ",
@@ -679,15 +667,14 @@ export const schemaToTypeScript = (
 import { sql } from "drizzle-orm"\n\n`;
 
 	let decalrations: string = "";
-	if (containsTSVector) {
-		decalrations += `export const tsvector = customType<{
+
+	decalrations += `export const tsvector = customType<{
 data: string;
 }>({
 dataType() {
   return 'tsvector';
 },
 });`;
-	}
 
 	decalrations += schemaStatements;
 	decalrations += rolesStatements;
