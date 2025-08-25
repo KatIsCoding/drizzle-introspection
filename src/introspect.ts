@@ -242,9 +242,13 @@ export async function introspectPostgres(
 	// 	});
 	// } catch {}
 
-	const schemaFile = resolve(join(out, "schema.ts"));
-	writeFileSync(schemaFile, ts.file);
-	const relationsFile = resolve(join(out, "relations.ts"));
-	writeFileSync(relationsFile, relationsTs.file);
+	const schemaFile = join(import.meta.dir, out, "schema.ts");
+	await Bun.write(schemaFile, ts.file, {
+		createPath: true,
+	});
+	const relationsFile = join(import.meta.dir, out, "relations.ts");
+	await Bun.write(relationsFile, relationsTs.file, {
+		createPath: true,
+	});
 	console.log();
 }
