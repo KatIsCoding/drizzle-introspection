@@ -10,7 +10,7 @@ import type { PgSchema } from "./internal/schemas/pgSchema";
 import { assertUnreachable, originUUID } from "./internal/global";
 import { paramNameFor, schemaToTypeScript } from "./internal/pg_introspection";
 import { plural, singular } from "pluralize";
-import { join } from "path";
+import { join, resolve } from "path";
 import { mkdirSync, writeFileSync } from "fs";
 import "./@types/utils";
 
@@ -242,9 +242,9 @@ export async function introspectPostgres(
 		});
 	} catch {}
 
-	const schemaFile = join(out, "schema.ts");
+	const schemaFile = resolve(join(out, "schema.ts"));
 	writeFileSync(schemaFile, ts.file);
-	const relationsFile = join(out, "relations.ts");
+	const relationsFile = resolve(join(out, "relations.ts"));
 	writeFileSync(relationsFile, relationsTs.file);
 	console.log();
 }
