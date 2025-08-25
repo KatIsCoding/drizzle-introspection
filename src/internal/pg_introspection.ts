@@ -614,6 +614,8 @@ export const schemaToTypeScript = (
 		return statement;
 	});
 
+	let containsTSVector = false;
+
 	const viewsStatements = Object.values(schema.views)
 		.map((it) => {
 			const viewSchema = schemas[it.schema];
@@ -644,6 +646,10 @@ export const schemaToTypeScript = (
 				schema.internal,
 			);
 
+			if (columns.includes("tsvector")) {
+				containsTSVector = true;
+			}
+
 			let statement = `export const ${withCasing(paramName, casing)} = ${func}("${it.name}", {${columns}})`;
 			statement += tablespace ? `.tablespace("${tablespace}")` : "";
 			statement += withOption ? `.with(${JSON.stringify(withOption)})` : "";
@@ -655,12 +661,28 @@ export const schemaToTypeScript = (
 
 	const uniquePgImports = ["pgTable", ...new Set(imports.pg)];
 
+	// In case the statement include tsvector, then add the custom type.
+	if (containsTSVector) {
+		uniquePgImports.push("customType");
+	}
+
 	const importsTs = `import { ${uniquePgImports.join(
 		", ",
 	)} } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"\n\n`;
 
-	let decalrations = schemaStatements;
+	let decalrations: string = "";
+	if (containsTSVector) {
+		decalrations += `export const tsvector = customType<{
+data: string;
+}>({
+dataType() {
+  return 'tsvector';
+},
+});`;
+	}
+
+	decalrations += schemaStatements;
 	decalrations += rolesStatements;
 	decalrations += enumStatements;
 	decalrations += sequencesStatements;
@@ -1198,6 +1220,12 @@ const column = (
 			out = `${withCasing(name, casing)}: char(${dbColumnName({ name, casing })})`;
 		}
 
+		return out;
+	}
+
+	if (lowered.startsWith("tsvector")) {
+		let out: string;
+		out = `${withCasing(name, casing)}: tsvector(${dbColumnName({ name, casing })})`;
 		return out;
 	}
 
