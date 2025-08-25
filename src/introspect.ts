@@ -12,6 +12,7 @@ import { paramNameFor, schemaToTypeScript } from "./internal/pg_introspection";
 import { plural, singular } from "pluralize";
 import { join } from "path";
 import { writeFileSync } from "fs";
+import "./@types/utils";
 
 const withCasing = (value: string, casing: Casing) => {
 	if (casing === "preserve") {
