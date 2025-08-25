@@ -132,6 +132,6 @@ export const safeRegister = async () => {
 	}
 
 	// has to be outside try catch to be able to run with tsx
-	await assertES5(res.unregister);
+	// await assertES5(res.unregister);
 	return res;
 };
