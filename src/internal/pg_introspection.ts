@@ -8,7 +8,7 @@ import {
 	Relation,
 	Relations,
 } from "drizzle-orm/relations";
-import "./@types/utils";
+// import "./@types/utils";
 import { toCamelCase } from "drizzle-orm/casing";
 import { assertUnreachable } from "./global";
 import type {
