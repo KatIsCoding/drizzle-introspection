@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { resolve } from "./loader.mjs";
-import { join } from "path";
+
+import { join, resolve } from "path";
 import {
 	configCommonSchema,
 	type CliConfig,
