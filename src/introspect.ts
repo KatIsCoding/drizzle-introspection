@@ -236,11 +236,11 @@ export async function introspectPostgres(
 	const ts = schemaToTypeScript(schema, casing);
 	const relationsTs = relationsToTypeScript(schema, casing);
 	const { internal, ...schemaWithoutInternals } = schema;
-	try {
-		mkdirSync(out, {
-			recursive: true,
-		});
-	} catch {}
+	// try {
+	// 	mkdirSync(out, {
+	// 		recursive: true,
+	// 	});
+	// } catch {}
 
 	const schemaFile = resolve(join(out, "schema.ts"));
 	writeFileSync(schemaFile, ts.file);
