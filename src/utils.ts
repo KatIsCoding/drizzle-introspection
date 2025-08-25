@@ -32,10 +32,22 @@ export type TransactionProxy = (
 
 export function unescapeSingleQuotes(
 	str: string,
-	ignoreFirstAndLastChar: boolean,
-) {
-	const regex = ignoreFirstAndLastChar ? /(?<!^)'(?!$)/g : /'/g;
-	return str.replace(/''/g, "'").replace(regex, "\\'");
+	ignoreFirstAndLastChar: boolean = false,
+): string {
+	if (ignoreFirstAndLastChar && str.length >= 2) {
+		// Process only the middle part of the string
+		const firstChar = str[0];
+		const lastChar = str[str.length - 1];
+		const middlePart = str.slice(1, -1);
+
+		// Replace escaped single quotes with unescaped single quotes in the middle part
+		const unescapedMiddle = middlePart.replace(/\\'/g, "'");
+
+		return firstChar + unescapedMiddle + lastChar;
+	} else {
+		// Process the entire string
+		return str.replace(/\\'/g, "'");
+	}
 }
 
 export const drizzleConfigFromFile = async (
