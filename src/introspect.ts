@@ -243,6 +243,7 @@ export async function introspectPostgres(
 	// } catch {}
 
 	const schemaFile = join(import.meta.dir, out, "schema.ts");
+	console.log("Writting to: ", schemaFile);
 	await Bun.write(schemaFile, ts.file, {
 		createPath: true,
 	});
