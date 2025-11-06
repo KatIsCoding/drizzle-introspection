@@ -585,11 +585,11 @@ export const schemaToTypeScript = (
 				Object.values(table.indexes),
 				casing,
 			);
-			statement += createTableFKs(
-				Object.values(table.foreignKeys),
-				schemas,
-				casing,
-			);
+			// statement += createTableFKs(
+			// 	Object.values(table.foreignKeys),
+			// 	schemas,
+			// 	casing,
+			// );
 			statement += createTablePKs(
 				Object.values(table.compositePrimaryKeys),
 				casing,
