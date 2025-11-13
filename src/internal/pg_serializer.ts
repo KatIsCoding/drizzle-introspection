@@ -2286,8 +2286,8 @@ const defaultForColumn = (
 						]!.isDefaultAnExpression = true;
 					}
 				}
-				// Return raw expression - schema generator will wrap it in sql``
-				return "sql`" + originalDefault + "`";
+				// Add padding so when schema generator does .slice(1, -1), we get the correct value
+				return `'sql\`${originalDefault}\`'`;
 			}
 		} else {
 			// It's a function call or expression (e.g., jsonb_build_object(...))
@@ -2313,8 +2313,8 @@ const defaultForColumn = (
 					]!.isDefaultAnExpression = true;
 				}
 			}
-			// Return raw expression - schema generator will wrap it in sql``
-			return "sql`" + originalDefault + "`";
+			// Add padding so when schema generator does .slice(1, -1), we get the correct value
+			return `'sql\`${originalDefault}\`'`;
 		}
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
