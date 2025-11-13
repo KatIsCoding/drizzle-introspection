@@ -2165,6 +2165,9 @@ const defaultForColumn = (
 		column.column_default = column.column_default.slice(0, -2);
 	}
 
+	// Store original before removing type casts for json/jsonb function detection
+	const originalDefault = column.column_default.toString();
+
 	// if (
 	// 	!['integer', 'smallint', 'bigint', 'double precision', 'real'].includes(column.data_type)
 	// ) {
@@ -2247,10 +2250,15 @@ const defaultForColumn = (
 			: `'${columnDefaultAsString}'`;
 	} else if (column.data_type === "json" || column.data_type === "jsonb") {
 		// Check if it's a JSON literal (starts and ends with quotes) or a function call
-		if (columnDefaultAsString.startsWith("'") && columnDefaultAsString.endsWith("'")) {
+		// Use originalDefault to preserve function names that might be affected by type cast removal
+		const jsonDefault = originalDefault.startsWith("'") && originalDefault.includes("'::")
+			? originalDefault.substring(0, originalDefault.lastIndexOf("'::") + 1)
+			: originalDefault;
+
+		if (jsonDefault.startsWith("'") && jsonDefault.endsWith("'")) {
 			try {
 				const jsonWithoutSpaces = JSON.stringify(
-					JSON.parse(columnDefaultAsString.slice(1, -1)),
+					JSON.parse(jsonDefault.slice(1, -1)),
 				);
 				return `'${jsonWithoutSpaces}'::${column.data_type}`;
 			} catch (e) {
@@ -2277,7 +2285,7 @@ const defaultForColumn = (
 						]!.isDefaultAnExpression = true;
 					}
 				}
-				return columnDefaultAsString;
+				return `sql\`${originalDefault}\``;
 			}
 		} else {
 			// It's a function call or expression (e.g., jsonb_build_object(...))
@@ -2303,7 +2311,8 @@ const defaultForColumn = (
 					]!.isDefaultAnExpression = true;
 				}
 			}
-			return columnDefaultAsString;
+			// Wrap function calls in sql template literal
+			return `sql\`${originalDefault}\``;
 		}
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
