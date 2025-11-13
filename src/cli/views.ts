@@ -145,6 +145,7 @@ export class IntrospectProgress extends TaskView {
 		info += this.statusText(spin, this.state.checks);
 		info += this.statusText(spin, this.state.views);
 
-		return info;
+		// return info;
+		return "";
 	}
 }
