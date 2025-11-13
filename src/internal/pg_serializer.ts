@@ -2251,9 +2251,10 @@ const defaultForColumn = (
 	} else if (column.data_type === "json" || column.data_type === "jsonb") {
 		// Check if it's a JSON literal (starts and ends with quotes) or a function call
 		// Use originalDefault to preserve function names that might be affected by type cast removal
-		const jsonDefault = originalDefault.startsWith("'") && originalDefault.includes("'::")
-			? originalDefault.substring(0, originalDefault.lastIndexOf("'::") + 1)
-			: originalDefault;
+		const jsonDefault =
+			originalDefault.startsWith("'") && originalDefault.includes("'::")
+				? originalDefault.substring(0, originalDefault.lastIndexOf("'::") + 1)
+				: originalDefault;
 
 		if (jsonDefault.startsWith("'") && jsonDefault.endsWith("'")) {
 			try {
@@ -2286,7 +2287,7 @@ const defaultForColumn = (
 					}
 				}
 				// Return raw expression - schema generator will wrap it in sql``
-				return originalDefault;
+				return "sql`" + originalDefault + "`";
 			}
 		} else {
 			// It's a function call or expression (e.g., jsonb_build_object(...))
@@ -2313,7 +2314,7 @@ const defaultForColumn = (
 				}
 			}
 			// Return raw expression - schema generator will wrap it in sql``
-			return originalDefault;
+			return "sql`" + originalDefault + "`";
 		}
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
