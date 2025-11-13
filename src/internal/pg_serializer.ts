@@ -2246,6 +2246,9 @@ const defaultForColumn = (
 			? columnDefaultAsString
 			: `'${columnDefaultAsString}'`;
 	} else if (column.data_type === "json" || column.data_type === "jsonb") {
+		console.log("Full var", columnDefaultAsString);
+		console.log("Splitted var", columnDefaultAsString.slice(1, -1));
+
 		const jsonWithoutSpaces = JSON.stringify(
 			JSON.parse(columnDefaultAsString.slice(1, -1)),
 		);
