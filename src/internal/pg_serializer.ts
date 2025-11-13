@@ -2249,9 +2249,7 @@ const defaultForColumn = (
 		console.log("Full var", columnDefaultAsString);
 		console.log("Splitted var", columnDefaultAsString.slice(1, -1));
 
-		const jsonWithoutSpaces = JSON.stringify(
-			JSON.parse(columnDefaultAsString.slice(1, -1)),
-		);
+		const jsonWithoutSpaces = JSON.stringify(JSON.parse(columnDefaultAsString));
 		return `'${jsonWithoutSpaces}'::${column.data_type}`;
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
