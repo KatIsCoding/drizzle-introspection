@@ -2246,11 +2246,65 @@ const defaultForColumn = (
 			? columnDefaultAsString
 			: `'${columnDefaultAsString}'`;
 	} else if (column.data_type === "json" || column.data_type === "jsonb") {
-		console.log("Full var", columnDefaultAsString);
-		console.log("Splitted var", columnDefaultAsString.slice(1, -1));
-
-		const jsonWithoutSpaces = JSON.stringify(JSON.parse(columnDefaultAsString));
-		return `'${jsonWithoutSpaces}'::${column.data_type}`;
+		// Check if it's a JSON literal (starts and ends with quotes) or a function call
+		if (columnDefaultAsString.startsWith("'") && columnDefaultAsString.endsWith("'")) {
+			try {
+				const jsonWithoutSpaces = JSON.stringify(
+					JSON.parse(columnDefaultAsString.slice(1, -1)),
+				);
+				return `'${jsonWithoutSpaces}'::${column.data_type}`;
+			} catch (e) {
+				// If parsing fails, treat it as an expression
+				if (typeof internals!.tables![tableName] === "undefined") {
+					internals!.tables![tableName] = {
+						columns: {
+							[columnName]: {
+								isDefaultAnExpression: true,
+							},
+						},
+					};
+				} else {
+					if (
+						typeof internals!.tables![tableName]!.columns[columnName] ===
+						"undefined"
+					) {
+						internals!.tables![tableName]!.columns[columnName] = {
+							isDefaultAnExpression: true,
+						};
+					} else {
+						internals!.tables![tableName]!.columns[
+							columnName
+						]!.isDefaultAnExpression = true;
+					}
+				}
+				return columnDefaultAsString;
+			}
+		} else {
+			// It's a function call or expression (e.g., jsonb_build_object(...))
+			if (typeof internals!.tables![tableName] === "undefined") {
+				internals!.tables![tableName] = {
+					columns: {
+						[columnName]: {
+							isDefaultAnExpression: true,
+						},
+					},
+				};
+			} else {
+				if (
+					typeof internals!.tables![tableName]!.columns[columnName] ===
+					"undefined"
+				) {
+					internals!.tables![tableName]!.columns[columnName] = {
+						isDefaultAnExpression: true,
+					};
+				} else {
+					internals!.tables![tableName]!.columns[
+						columnName
+					]!.isDefaultAnExpression = true;
+				}
+			}
+			return columnDefaultAsString;
+		}
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
 	} else if (columnDefaultAsString === "NULL") {
