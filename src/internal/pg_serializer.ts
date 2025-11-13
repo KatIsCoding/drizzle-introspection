@@ -2285,7 +2285,8 @@ const defaultForColumn = (
 						]!.isDefaultAnExpression = true;
 					}
 				}
-				return `sql\`${originalDefault}\``;
+				// Return raw expression - schema generator will wrap it in sql``
+				return originalDefault;
 			}
 		} else {
 			// It's a function call or expression (e.g., jsonb_build_object(...))
@@ -2311,8 +2312,8 @@ const defaultForColumn = (
 					]!.isDefaultAnExpression = true;
 				}
 			}
-			// Wrap function calls in sql template literal
-			return `sql\`${originalDefault}\``;
+			// Return raw expression - schema generator will wrap it in sql``
+			return originalDefault;
 		}
 	} else if (column.data_type === "boolean") {
 		return column.column_default === "true";
